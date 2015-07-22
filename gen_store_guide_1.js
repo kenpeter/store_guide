@@ -11,6 +11,7 @@ var csvToJson = csv({objectMode: true});
 var parser = new Transform({objectMode: true});
 
 parser._tmp_first_letter = '';
+parser._tmp_first_letter_on = true;
 parser._transform = function(data, encoding, done) {
   // Because an empty line becomes [""], which data.length == 1 
   if(data.length > 1) {
@@ -20,7 +21,11 @@ parser._transform = function(data, encoding, done) {
     var highlight = data[2];
 
     if(this._tmp_first_letter != first_letter) {
-      this._tmp_first_letter = first_letter; 
+      this._tmp_first_letter = first_letter;
+      parser._tmp_first_letter_on = true; 
+    }
+    else {
+      parser._tmp_first_letter_on = false;
     }
 
     // https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
@@ -30,6 +35,10 @@ parser._transform = function(data, encoding, done) {
     }
     else {
       line = '* ' + item + ', ' + '**' + row + '**' + '\n';
+    }
+
+    if(parser._tmp_first_letter_on) {
+      line = '## ' + this._tmp_first_letter + '\n' +line;
     }
 
     this.push(line);  
