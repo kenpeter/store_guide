@@ -38,7 +38,7 @@ parser._transform = function(data, encoding, done) {
     }
 
     if(parser._tmp_first_letter_on) {
-      line = '## ' + this._tmp_first_letter + '\n' +line;
+      line = '\n' + '## ' + this._tmp_first_letter + '\n' +line;
     }
 
     this.push(line);  
